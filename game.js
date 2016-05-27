@@ -113,7 +113,7 @@ module.exports = function(io) {
 
         // scores
         var startScore = 0;
-        var scoreMax = 3;
+        var scoreMax = 51;
         var scores = {'top' : startScore, 'bottom' : startScore, 'left' : startScore, 'right' : startScore};
 
         // behaviour
@@ -205,7 +205,7 @@ module.exports = function(io) {
             }
 
             for(var score in scores) {
-                if(score >= scoreMax) {
+                if(scores[score] >= scoreMax) {
                     scores['top'] = startScore;
                     scores['right'] = startScore;
                     scores['bottom'] = startScore;
