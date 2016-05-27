@@ -116,6 +116,13 @@ module.exports = function(io) {
         var scoreMax = 51;
         var scores = {'top' : startScore, 'bottom' : startScore, 'left' : startScore, 'right' : startScore};
 
+        var topBot = 'Red Bot';
+        var bottomBot = 'Green Bot';
+        var leftBot = 'Blue Bot'
+        rightBot = 'Purple Bot'
+        var playerPositions = {'top' : topBot, 'bottom' : bottomBot, 'left' : leftBot, 'right' : rightBot};
+
+
         // behaviour
         world.add( Physics.behavior('body-impulse-response') );
         world.add( Physics.behavior('body-collision-detection') );
@@ -124,6 +131,7 @@ module.exports = function(io) {
         // world state
         world.on('step', function(){
             // send world state
+            console.log(playerPositions)
             io.sockets.emit('world state', {
 
                 balls : balls.map(function (ball) {
@@ -133,7 +141,8 @@ module.exports = function(io) {
                 topPlayer: playerBody['top'].state.pos._,
                 leftPlayer: playerBody['left'].state.pos._,
                 rightPlayer: playerBody['right'].state.pos._,
-                scores: scores});
+                scores: scores,
+                playerNames : playerPositions});
 
             // balls logic
             if(currentBallsCount < maxBallsCount) {
@@ -226,6 +235,7 @@ module.exports = function(io) {
             socket.on('newPlayer', function (data) {
                 if(availablePositions.length != 0) {
                     players[data['username']] = availablePositions[0];
+                    playerPositions[availablePositions[0]] = data['username'];
                     availablePositions.shift();
                     console.log('New Player: ' + data['username'] + ' || Unoccupied positions: ' + availablePositions)
                     socket.emit('positionAssigned', {position : players[data['username']]})
@@ -283,7 +293,6 @@ module.exports = function(io) {
                 } else {
                     playerBody[position].state.pos.y = newPosition[1];
                 }
-                //console.log('player: ' + data['username'] + ' movement: ' + move);
                 
             });
         });
