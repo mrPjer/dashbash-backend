@@ -16,35 +16,35 @@ var world = Physics();
 module.exports = function(io) {
     Physics(function( world ){
 
-        var players = {};
-        var availablePositions = ['bottom', 'left', 'top', 'right'];
-
         // set up the world
+        var framerate = 100;
+
+        var cornerRadius = 0.1
         var topLeftCorner = Physics.body('circle', {
             x: 0,
             y: 0,
-            radius: 0.1,
+            radius: cornerRadius,
             treatment: 'static'
         });
 
         var topRightCorner = Physics.body('circle', {
             x: 1,
             y: 0,
-            radius: 0.1,
+            radius: cornerRadius,
             treatment: 'static'
         });
 
         var bottomLeftCorner = Physics.body('circle', {
             x: 0,
             y: 1,
-            radius: 0.1,
+            radius: cornerRadius,
             treatment: 'static'
         });
 
         var bottomRightCorner = Physics.body('circle', {
             x: 1,
             y: 1,
-            radius: 0.1,
+            radius: cornerRadius,
             treatment: 'static'
         });
 
@@ -53,7 +53,11 @@ module.exports = function(io) {
         world.add(bottomLeftCorner);
         world.add(bottomRightCorner);
 
+
+        var availablePositions = ['bottom', 'left', 'top', 'right'];
         var playerBody = {};
+        var players = {};
+
         playerBody['top'] = Physics.body('circle', {
             x: 0.5,
             y: -0.05,
@@ -87,6 +91,22 @@ module.exports = function(io) {
         world.add(playerBody['right']);
         world.add(playerBody['bottom']);
 
+        // balls constants
+        var maxBallsCount = 5;
+        var currentBallsCount = 0;
+        var ballCreationProbability = 0.1;
+        var ballRadius = 0.05;
+        var ballMass = 1;
+        var balls = [];
+
+        function randomInt (low, high) {
+            return Math.floor(Math.random() * (high - low) + low);
+        }
+
+        function random (low, high) {
+            return Math.random() * (high - low) + low;
+        }
+
         //test ball
         var ball = Physics.body('circle', {
             x: 0.5,
@@ -97,7 +117,7 @@ module.exports = function(io) {
             mass: 1
         });
 
-        world.add(ball);
+        //world.add(ball);
 
         // behaviour
         world.add( Physics.behavior('body-impulse-response') );
@@ -106,14 +126,68 @@ module.exports = function(io) {
 
         // world state
         world.on('step', function(){
-            //console.log(ball.state.pos._)
-            // broadcast world state
+            // send world state
             io.sockets.emit('world state', {
-                balls : [ball.state.pos._],
+
+                balls : balls.map(function (ball) {
+                    return ball.state.pos._;
+                }),
                 bottomPlayer: playerBody['bottom'].state.pos._,
                 topPlayer: playerBody['top'].state.pos._,
                 leftPlayer: playerBody['left'].state.pos._,
                 rightPlayer: playerBody['right'].state.pos._});
+
+            // balls logic
+            if(currentBallsCount < maxBallsCount) {
+                if(Math.random() <= ballCreationProbability) {
+                    console.log('ball created');
+                    var newBallPosition = randomInt(0, 3);
+                    var ballX, ballY;
+                    var ballSpeedX, ballSpeedY;
+                    switch(newBallPosition) {
+                        case 0:
+                            // top left
+                            ballX = cornerRadius + ballRadius;
+                            ballY = cornerRadius + ballRadius;
+                            ballSpeedX = 0.01;
+                            ballSpeedY = 0.01;
+                            break;
+                        case 1:
+                            // top right
+                            ballX = 1 - cornerRadius - ballRadius;
+                            ballY = cornerRadius + ballRadius;
+                            ballSpeedX = -0.01;
+                            ballSpeedY = 0.05;
+                            break;
+                        case 2:
+                            // bottom right
+                            ballX = 1 - cornerRadius - ballRadius;
+                            ballY = 1 - cornerRadius - ballRadius;
+                            ballSpeedX = -0.01;
+                            ballSpeedY = -0.04;
+                            break;
+                        case 3:
+                            // bottom left
+                            ballX = cornerRadius - ballRadius;
+                            ballY = 1 - cornerRadius - ballRadius;
+                            ballSpeedX = 0.03;
+                            ballSpeedY = -0.02;
+                            break;
+                    }
+                    balls.push(Physics.body('circle', {
+                        x: ballX,
+                        y: ballY,
+                        radius: ballRadius,
+                        vx: ballSpeedX,
+                        vy: ballSpeedY,
+                        mass: ballMass
+                    }));
+                    world.add(balls[balls.length-1]);
+                    currentBallsCount++;
+                }
+            }
+
+            // dev LOG
             // console.log('timestamp: ' + world._time);
             // console.log('BALL         || x: ' + ball.state.pos._[0] + ' y: ' + ball.state.pos._[1]);
             // console.log('TopPlayer    || x: ' + playerBody['top'].state.pos.x + ' y: ' + playerBody['top'].state.pos.y);
@@ -124,7 +198,7 @@ module.exports = function(io) {
 
         });
 
-
+        // player interaction
         io.on('connection', function (socket) {
             // new player
             socket.on('newPlayer', function (data) {
@@ -188,7 +262,7 @@ module.exports = function(io) {
 
         setInterval(function() {
             world.step(world.time)
-        }, 1000);
+        }, framerate);
 
     });
 
