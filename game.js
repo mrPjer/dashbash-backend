@@ -210,6 +210,7 @@ module.exports = function(io) {
                     players[data['username']] = availablePositions[0];
                     availablePositions.shift();
                     console.log('New Player: ' + data['username'] + ' || Unoccupied positions: ' + availablePositions)
+                    socket.emit('positionAssigned', {position : players[data['username']]})
                 } else {
                     console.log('Game is full.')
                 }
