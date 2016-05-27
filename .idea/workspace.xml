@@ -34,10 +34,10 @@
       <file leaf-file-name="game.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/game.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="267">
-              <caret line="120" column="38" selection-start-line="120" selection-start-column="38" selection-end-line="120" selection-end-column="38" />
+            <state relative-caret-position="252">
+              <caret line="119" column="25" selection-start-line="119" selection-start-column="25" selection-end-line="119" selection-end-column="25" />
               <folding>
-                <marker date="1464387658900" expanded="false" signature="0:46" ph="/** Created by Ante Dante on 5/27/2016. ...*/" />
+                <marker date="1464387755391" expanded="false" signature="0:46" ph="/** Created by Ante Dante on 5/27/2016. ...*/" />
               </folding>
             </state>
           </provider>
@@ -266,12 +266,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1464348818821</updated>
-      <workItem from="1464348820543" duration="38275000" />
+      <workItem from="1464348820543" duration="38373000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="38275000" />
+    <option name="totallyTimeSpent" value="38373000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -402,10 +402,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/game.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="267">
-          <caret line="120" column="38" selection-start-line="120" selection-start-column="38" selection-end-line="120" selection-end-column="38" />
+        <state relative-caret-position="252">
+          <caret line="119" column="25" selection-start-line="119" selection-start-column="25" selection-end-line="119" selection-end-column="25" />
           <folding>
-            <marker date="1464387658900" expanded="false" signature="0:46" ph="/** Created by Ante Dante on 5/27/2016. ...*/" />
+            <marker date="1464387755391" expanded="false" signature="0:46" ph="/** Created by Ante Dante on 5/27/2016. ...*/" />
           </folding>
         </state>
       </provider>
