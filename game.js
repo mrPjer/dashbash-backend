@@ -19,7 +19,7 @@ module.exports = function(io) {
         // set up the world
         var framerate = 100;
 
-        var cornerRadius = 0.1
+        var cornerRadius = 0.1;
         var topLeftCorner = Physics.body('circle', {
             x: 0,
             y: 0,
@@ -92,11 +92,12 @@ module.exports = function(io) {
         world.add(playerBody['bottom']);
 
         // balls constants
-        var maxBallsCount = 5;
+        var maxBallsCount = 4;
         var currentBallsCount = 0;
         var ballCreationProbability = 0.1;
         var ballRadius = 0.05;
         var ballMass = 1;
+        var ball_id = 0;
         var balls = [];
 
         function randomInt (low, high) {
@@ -106,18 +107,6 @@ module.exports = function(io) {
         function random (low, high) {
             return Math.random() * (high - low) + low;
         }
-
-        //test ball
-        var ball = Physics.body('circle', {
-            x: 0.5,
-            y: 0.5,
-            radius: 0.05,
-            vx: 0.0,
-            vy: 0.01,
-            mass: 1
-        });
-
-        //world.add(ball);
 
         // behaviour
         world.add( Physics.behavior('body-impulse-response') );
@@ -180,12 +169,24 @@ module.exports = function(io) {
                         radius: ballRadius,
                         vx: ballSpeedX,
                         vy: ballSpeedY,
-                        mass: ballMass
+                        mass: ballMass,
+                        id: ball_id
                     }));
                     world.add(balls[balls.length-1]);
+                    ball_id++;
                     currentBallsCount++;
                 }
             }
+
+            for(var i = 0; i < balls.length; i++) {
+                if(balls[i].state.pos.x <= 0 || balls[i].state.pos.x >= 1 ||
+                    balls[i].state.pos.y <= 0 || balls[i].state.pos.y >= 1) {
+                    world.remove(balls[i]);
+                    balls.splice(i,1);
+                    currentBallsCount--;
+                }
+            }
+
 
             // dev LOG
             // console.log('timestamp: ' + world._time);
