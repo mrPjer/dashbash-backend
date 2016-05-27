@@ -123,7 +123,6 @@ module.exports = function(io) {
 
         // world state
         world.on('step', function(){
-            console.log(scores);
             // send world state
             io.sockets.emit('world state', {
 
