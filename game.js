@@ -104,14 +104,24 @@ module.exports = function(io) {
         world.add( Physics.behavior('body-collision-detection') );
         world.add( Physics.behavior('sweep-prune') );
 
-        // time
+        // world state
         world.on('step', function(){
+            //console.log(ball.state.pos._)
+            // broadcast world state
+            io.on('connection', function (socket) {
+                socket.emit('world state', {
+                    balls : [ball.state.pos._],
+                    bottomPlayer: playerBody['bottom'].state.pos._,
+                    topPlayer: playerBody['top'].state.pos._,
+                    leftPlayer: playerBody['left'].state.pos._,
+                    rightPlayer: playerBody['right'].state.pos._});
+            });
             // console.log('timestamp: ' + world._time);
             // console.log('BALL         || x: ' + ball.state.pos._[0] + ' y: ' + ball.state.pos._[1]);
             // console.log('TopPlayer    || x: ' + playerBody['top'].state.pos.x + ' y: ' + playerBody['top'].state.pos.y);
-            // console.log('LeftPlayer   || x: ' + playerLeft.state.pos._[0] + ' y: ' + playerLeft.state.pos._[1]);
-            // console.log('BottomPlayer || x: ' + playerBottom.state.pos._[0] + ' y: ' + playerBottom.state.pos._[1]);
-            // console.log('RightPlayer  || x: ' + playerRight.state.pos._[0] + ' y: ' + playerRight.state.pos._[1]);
+            // console.log('BottomPlayer || x: ' + playerBody['bottom'].state.pos.x + ' y: ' + playerBody['bottom'].state.pos.y);
+            // console.log('LeftPlayer   || x: ' + playerBody['left'].state.pos.x + ' y: ' + playerBody['left'].state.pos.y);
+            // console.log('RightPlayer  || x: ' + playerBody['right'].state.pos.x + ' y: ' + playerBody['right'].state.pos.y);
             // console.log('')
 
         });
@@ -174,9 +184,7 @@ module.exports = function(io) {
 
         function isAllowedMovement(position, move) {
             // TODO
-            if(position == 'top' || position == 'bottom') {
-
-            }
+            return true;
         }
 
 
