@@ -6,6 +6,8 @@ var Physics = require('./node_modules/physicsjs/dist/physicsjs-full.min');
 
 var viewWidth = 1;
 var viewHeight = 1;
+var cornerRadius = 0.166;
+var playerRadius = 0.125;
 
 console.log('game start');
 
@@ -19,7 +21,6 @@ module.exports = function(io) {
         // set up the world
         var framerate = 100;
 
-        var cornerRadius = 0.1
         var topLeftCorner = Physics.body('circle', {
             x: 0,
             y: 0,
@@ -61,28 +62,28 @@ module.exports = function(io) {
         playerBody['top'] = Physics.body('circle', {
             x: 0.5,
             y: -0.05,
-            radius: 0.1,
+            radius: playerRadius,
             treatment: 'static'
         });
 
         playerBody['left'] = Physics.body('circle', {
             x: -0.05,
             y: 0.5,
-            radius: 0.1,
+            radius: playerRadius,
             treatment: 'static'
         });
 
         playerBody['right'] = Physics.body('circle', {
             x: 1.05,
             y: 0.5,
-            radius: 0.1,
+            radius: playerRadius,
             treatment: 'static'
         });
 
         playerBody['bottom'] = Physics.body('circle', {
             x: 0.5,
             y: 1.05,
-            radius: 0.1,
+            radius: playerRadius,
             treatment: 'static'
         });
 
@@ -215,50 +216,55 @@ module.exports = function(io) {
                 var dx = 0.01;
                 var position = players[data['username']];
                 var move = data['move'];
+					 var newPosition = [
+								playerBody[position].state.pos.x,
+								playerBody[position].state.pos.y
+                ];
+                var changedPosition = 0;
                 switch (position) {
                     case 'top':
-                        if(isAllowedMovement(position, move)) {
-                            if(move == 'left')
-                                playerBody[position].state.pos.x += dx;
-                            if(move == 'right')
-                                playerBody[position].state.pos.x -= dx;
-                        }
+                        if(move == 'left')
+                            newPosition[0] += dx;
+                        if(move == 'right')
+                            newPosition[0] -= dx;
+                        changedPosition = 0;
                         break;
                     case 'left':
-                        if(isAllowedMovement(position, move)) {
-                            if(move == 'left')
-                                playerBody[position].state.pos.y -= dx;
-                            if(move == 'right')
-                                playerBody[position].state.pos.y += dx;
-                        }
+                        if(move == 'left')
+                            newPosition[1] -= dx;
+                        if(move == 'right')
+                            newPosition[1] += dx;
+                        changedPosition = 1;
                         break;
                     case 'right':
-                        if(isAllowedMovement(position, move)) {
-                            if(move == 'left')
-                                playerBody[position].state.pos.y += dx;
-                            if(move == 'right')
-                                playerBody[position].state.pos.y -= dx;
-                        }
+                        if(move == 'left')
+                            newPosition[1] += dx;
+                        if(move == 'right')
+                            newPosition[1] -= dx;
+                        changedPosition = 1;
                         break;
                     case 'bottom':
-                        if(isAllowedMovement(position, move)) {
-                            if(move == 'left')
-                                playerBody[position].state.pos.x -= dx;
-                            if(move == 'right')
-                                playerBody[position].state.pos.x += dx;
-                        }
+                        if(move == 'left')
+                            newPosition[0] -= dx;
+                            playerBody[position].state.pos.x -= dx;
+                        if(move == 'right')
+                            newPosition[0] += dx;
+                            playerBody[position].state.pos.x += dx;
+                        changedPosition = 0;
                         break;
+                }
+                newPosition[0] = Math.min(1 - cornerRadius - playerRadius, Math.max(cornerRadius + playerRadius, newPosition[0]));
+                newPosition[1] = Math.min(1 - cornerRadius - playerRadius, Math.max(cornerRadius + playerRadius, newPosition[1]));
+
+                if(changedPosition == 0) {
+                    playerBody[position].state.pos.x = newPosition[0];
+                } else {
+                    playerBody[position].state.pos.y = newPosition[1];
                 }
                 //console.log('player: ' + data['username'] + ' movement: ' + move);
                 
             });
         });
-
-        function isAllowedMovement(position, move) {
-            // TODO
-            return true;
-        }
-
 
         setInterval(function() {
             world.step(world.time)
