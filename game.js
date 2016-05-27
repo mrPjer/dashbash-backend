@@ -58,6 +58,7 @@ module.exports = function(io) {
 
 
         var availablePositions = ['bottom', 'left', 'top', 'right'];
+        var playerCount = 0;
         var playerBody = {};
         var players = {};
 
@@ -118,9 +119,10 @@ module.exports = function(io) {
 
         var topBot = 'Red Bot';
         var bottomBot = 'Green Bot';
-        var leftBot = 'Blue Bot'
-        rightBot = 'Purple Bot'
-        var playerPositions = {'top' : topBot, 'bottom' : bottomBot, 'left' : leftBot, 'right' : rightBot};
+        var leftBot = 'Blue Bot';
+        var rightBot = 'Purple Bot';
+        var playerPositions = {'bottom' : bottomBot, 'left' : leftBot, 'top' : topBot, 'right' : rightBot};
+
 
 
         // behaviour
@@ -131,7 +133,6 @@ module.exports = function(io) {
         // world state
         world.on('step', function(){
             // send world state
-            console.log(playerPositions)
             io.sockets.emit('world state', {
 
                 balls : balls.map(function (ball) {
@@ -231,14 +232,18 @@ module.exports = function(io) {
 
         // player interaction
         io.on('connection', function (socket) {
+
+            var playerUsername;
             // new player
             socket.on('newPlayer', function (data) {
-                if(availablePositions.length != 0) {
-                    players[data['username']] = availablePositions[0];
-                    playerPositions[availablePositions[0]] = data['username'];
+                if(playerCount < 4) {
+                    playerUsername = data['username'];
+                    players[playerUsername] = availablePositions[0];
+                    playerPositions[availablePositions[0]] = playerUsername;
                     availablePositions.shift();
-                    console.log('New Player: ' + data['username'] + ' || Unoccupied positions: ' + availablePositions)
-                    socket.emit('positionAssigned', {position : players[data['username']]})
+                    console.log('New Player: ' + playerUsername + ' || position: ' + players[playerUsername]);
+                    socket.emit('positionAssigned', {position : players[playerUsername]});
+                    playerCount++;
                 } else {
                     console.log('Game is full.')
                 }
@@ -295,7 +300,30 @@ module.exports = function(io) {
                 }
                 
             });
+
+            socket.on('disconnect', function () {
+                playerCount--;
+                switch(players[playerUsername]) {
+                    case 'bottom':
+                        playerPositions['bottom'] = bottomBot;
+                        availablePositions.unshift('bottom');
+                        break;
+                    case 'left':
+                        playerPositions['left'] = leftBot;
+                        availablePositions.unshift('left');
+                        break;
+                    case 'top':
+                        playerPositions['top'] = topBot;
+                        availablePositions.unshift('top');
+                        break;
+                    case 'right':
+                        playerPositions['right'] = rightBot;
+                        availablePositions.unshift('right');
+                        break;
+                }
+            });
         });
+        
 
         setInterval(function() {
             world.step(world.time)
