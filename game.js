@@ -92,7 +92,7 @@ module.exports = function(io) {
         world.add(playerBody['bottom']);
 
         // balls constants
-        var maxBallsCount = 5;
+        var maxBallsCount = 4;
         var currentBallsCount = 0;
         var ballCreationProbability = 0.1;
         var ballRadius = 0.05;
