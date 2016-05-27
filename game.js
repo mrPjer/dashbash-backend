@@ -100,9 +100,12 @@ module.exports = function(io) {
         var currentBallsCount = 0;
         var ballCreationProbability = 0.1;
         var ballRadius = 0.042;
+        var minimumSpeed = 0.00169;
         var ballMass = 1;
         var ball_id = 0;
         var balls = [];
+        var reset = false;
+        var resetDelay = 200;
 
         function randomInt (low, high) {
             return Math.floor(Math.random() * (high - low) + low);
@@ -114,7 +117,7 @@ module.exports = function(io) {
 
         // scores
         var startScore = 0;
-        var scoreMax = 51;
+        var scoreMax = 11;
         var scores = {'top' : startScore, 'bottom' : startScore, 'left' : startScore, 'right' : startScore};
 
         var topBot = 'Red Bot';
@@ -146,7 +149,15 @@ module.exports = function(io) {
                 playerNames : playerPositions});
 
             // balls logic
-            if(currentBallsCount < maxBallsCount) {
+            // add new balls
+            if(reset) {
+                resetDelay--;
+                if(resetDelay == 0) {
+                    reset = false;
+                    resetDelay = 200;
+                }
+                    
+            } else if(currentBallsCount < maxBallsCount) {
                 if(Math.random() <= ballCreationProbability) {
                     var newBallPosition = randomInt(0, 3);
                     var ballX, ballY;
@@ -181,6 +192,7 @@ module.exports = function(io) {
                             ballSpeedY = -0.0012;
                             break;
                     }
+
                     balls.push(Physics.body('circle', {
                         x: ballX,
                         y: ballY,
@@ -190,11 +202,23 @@ module.exports = function(io) {
                         mass: ballMass,
                         id: ball_id
                     }));
+
                     world.add(balls[balls.length-1]);
                     ball_id++;
                     currentBallsCount++;
                 }
             }
+
+            // Slow issue
+            // for(var i = 0; i < balls.length; i++) {
+            //     // if(Math.sqrt(Math.pow(balls[i].state.vel.x,2) + Math.pow(balls[i].state.vel.y,2)) < minimumSpeed) {
+            //     //     balls[i].state.vel.x += Math.sign(balls[i].state.vel.x) * 0.2 * balls[i].state.vel.x;
+            //     //     balls[i].state.vel.y += Math.sign(balls[i].state.vel.y) * 0.2 * balls[i].state.vel.y;
+            //     //     console.log('SLOW');
+            //     //
+            //     // }
+            //     console.log('i: ' +  balls[i].state.vel.x + ' ' + balls[i].state.vel.y);
+            // }
 
             // update scores
             for(var i = 0; i < balls.length; i++) {
@@ -219,6 +243,10 @@ module.exports = function(io) {
                     scores['right'] = startScore;
                     scores['bottom'] = startScore;
                     scores['left'] = startScore;
+                    for(var i = 0; i < balls.length; i++) {
+                        removeBall(i);
+                    }
+                    reset = true;
                     break;
                 }
             }
@@ -301,6 +329,7 @@ module.exports = function(io) {
                 
             });
 
+            // disconnect logic
             socket.on('disconnect', function () {
                 playerCount--;
                 switch(players[playerUsername]) {
