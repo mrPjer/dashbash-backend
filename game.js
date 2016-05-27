@@ -108,14 +108,12 @@ module.exports = function(io) {
         world.on('step', function(){
             //console.log(ball.state.pos._)
             // broadcast world state
-            io.on('connection', function (socket) {
-                socket.emit('world state', {
-                    balls : [ball.state.pos._],
-                    bottomPlayer: playerBody['bottom'].state.pos._,
-                    topPlayer: playerBody['top'].state.pos._,
-                    leftPlayer: playerBody['left'].state.pos._,
-                    rightPlayer: playerBody['right'].state.pos._});
-            });
+            io.sockets.emit('world state', {
+                balls : [ball.state.pos._],
+                bottomPlayer: playerBody['bottom'].state.pos._,
+                topPlayer: playerBody['top'].state.pos._,
+                leftPlayer: playerBody['left'].state.pos._,
+                rightPlayer: playerBody['right'].state.pos._});
             // console.log('timestamp: ' + world._time);
             // console.log('BALL         || x: ' + ball.state.pos._[0] + ' y: ' + ball.state.pos._[1]);
             // console.log('TopPlayer    || x: ' + playerBody['top'].state.pos.x + ' y: ' + playerBody['top'].state.pos.y);
