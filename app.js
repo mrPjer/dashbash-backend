@@ -1,7 +1,7 @@
 var app = require('http').createServer(handler);
 var io = require('socket.io')(app);
 var fs = require('fs');
-var game = require('./game');
+
 
 app.listen(3000);
 
@@ -22,20 +22,23 @@ var connectedUsers = [];
 var connections = 0;
 
 
-io.on('connection', function (socket) {
-  socket.emit('news', { hello: 'world' });
-  socket.on('my other event', function (data) {
-    console.log(data);
-  });
-  socket.on('connected', function (data) {
-    connections++;
-    console.log(connections);
-  });
-  socket.on('disconnect', function () {
-    connections--;
-    console.log(connections);
-  });
-});
+// io.on('connection', function (socket) {
+//   socket.emit('news', { hello: 'world' });
+//   socket.on('my other event', function (data) {
+//     console.log(data);
+//   });
+//   socket.on('connected', function (data) {
+//     connections++;
+//     console.log(connections);
+//   });
+//   socket.on('disconnect', function () {
+//     connections--;
+//     console.log(connections);
+//   });
+// });
+
+var game = require('./game')(io);
+
 
 
 

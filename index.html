@@ -5,8 +5,19 @@
     <title>Dashbash</title>
     <script src="/socket.io/socket.io.js"></script>
     <script>
+            var lastDownTarget, canvas;
+            window.onload = function() {
+            document.addEventListener('keydown', function(event) {
+                if(event.keyCode == 37)
+                    socket.emit('movement', {username : 'pinokio', move : 'left'});
+                if(event.keyCode == 39)
+                    socket.emit('movement', {username : 'pinokio', move : 'right'});
+            }, false);
+}
+    </script>
+    <script>
         var socket = io.connect('http://localhost:3000');
-        socket.emit('connected', {});
+        socket.emit('newPlayer', {username : 'pinokio'});
         socket.on('news', function (data) {
             console.log(data);
             socket.emit('my other event', { my: 'data' });
@@ -15,6 +26,6 @@
 </head>
 <body>
 Hi
-<canvas id="viewport" width="500" height="500"></canvas>
+<canvas id="viewport" width="500" height="500" style="background-color: #4d2d33"></canvas>
 </body>
 </html>
