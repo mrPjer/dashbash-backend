@@ -111,6 +111,11 @@ module.exports = function(io) {
             return Math.random() * (high - low) + low;
         }
 
+        // scores
+        var startScore = 0;
+        var scoreMax = 3;
+        var scores = {'top' : startScore, 'bottom' : startScore, 'left' : startScore, 'right' : startScore};
+
         // behaviour
         world.add( Physics.behavior('body-impulse-response') );
         world.add( Physics.behavior('body-collision-detection') );
@@ -118,6 +123,7 @@ module.exports = function(io) {
 
         // world state
         world.on('step', function(){
+            console.log(scores);
             // send world state
             io.sockets.emit('world state', {
 
@@ -127,12 +133,12 @@ module.exports = function(io) {
                 bottomPlayer: playerBody['bottom'].state.pos._,
                 topPlayer: playerBody['top'].state.pos._,
                 leftPlayer: playerBody['left'].state.pos._,
-                rightPlayer: playerBody['right'].state.pos._});
+                rightPlayer: playerBody['right'].state.pos._,
+                scores: scores});
 
             // balls logic
             if(currentBallsCount < maxBallsCount) {
                 if(Math.random() <= ballCreationProbability) {
-                    console.log('ball created');
                     var newBallPosition = randomInt(0, 3);
                     var ballX, ballY;
                     var ballSpeedX, ballSpeedY;
@@ -181,26 +187,39 @@ module.exports = function(io) {
                 }
             }
 
+            // update scores
             for(var i = 0; i < balls.length; i++) {
-                if(balls[i].state.pos.x <= 0 || balls[i].state.pos.x >= 1 ||
-                    balls[i].state.pos.y <= 0 || balls[i].state.pos.y >= 1) {
-                    world.remove(balls[i]);
-                    balls.splice(i,1);
-                    currentBallsCount--;
+                if(balls[i].state.pos.x <= 0) {
+                    scores['left']++;
+                    removeBall(i);
+                } else if(balls[i].state.pos.x >= 1) {
+                    scores['right']++;
+                    removeBall(i);
+                } else if(balls[i].state.pos.y <= 0) {
+                    scores['top']++;
+                    removeBall(i);
+                } else if(balls[i].state.pos.y >= 1) {
+                    scores['bottom']++;
+                    removeBall(i);
                 }
             }
 
-
-            // dev LOG
-            // console.log('timestamp: ' + world._time);
-            // console.log('BALL         || x: ' + ball.state.pos._[0] + ' y: ' + ball.state.pos._[1]);
-            // console.log('TopPlayer    || x: ' + playerBody['top'].state.pos.x + ' y: ' + playerBody['top'].state.pos.y);
-            // console.log('BottomPlayer || x: ' + playerBody['bottom'].state.pos.x + ' y: ' + playerBody['bottom'].state.pos.y);
-            // console.log('LeftPlayer   || x: ' + playerBody['left'].state.pos.x + ' y: ' + playerBody['left'].state.pos.y);
-            // console.log('RightPlayer  || x: ' + playerBody['right'].state.pos.x + ' y: ' + playerBody['right'].state.pos.y);
-            // console.log('')
-
+            for(var score in scores) {
+                if(score >= scoreMax) {
+                    scores['top'] = startScore;
+                    scores['right'] = startScore;
+                    scores['bottom'] = startScore;
+                    scores['left'] = startScore;
+                    break;
+                }
+            }
         });
+
+        function removeBall(index) {
+            world.remove(balls[index]);
+            balls.splice(index,1);
+            currentBallsCount--;
+        }
 
         // player interaction
         io.on('connection', function (socket) {
