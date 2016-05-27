@@ -246,6 +246,9 @@ module.exports = function(io) {
                     for(var i = 0; i < balls.length; i++) {
                         removeBall(i);
                     }
+                    for(var i = 0; i < balls.length; i++) {
+                        removeBall(i);
+                    }
                     reset = true;
                     break;
                 }
