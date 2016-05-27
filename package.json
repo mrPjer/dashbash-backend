@@ -1,0 +1,18 @@
+{
+  "name": "dashbash-backend",
+  "version": "1.0.0",
+  "description": "dashbash backend",
+  "main": "app.js",
+  "scripts": {
+    "test": "test-dash"
+  },
+  "keywords": [
+    "pong"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies" : {
+  	"socket.io" : "latest",
+    "physicsjs" : "latest"
+  }
+}
