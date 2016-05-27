@@ -19,7 +19,7 @@ module.exports = function(io) {
     Physics(function( world ){
 
         // set up the world
-        var framerate = 100;
+        var framerate = 16;
 
 
         var cornerRadius = 0.1;
@@ -98,7 +98,7 @@ module.exports = function(io) {
         var maxBallsCount = 4;
         var currentBallsCount = 0;
         var ballCreationProbability = 0.1;
-        var ballRadius = 0.05;
+        var ballRadius = 0.042;
         var ballMass = 1;
         var ball_id = 0;
         var balls = [];
@@ -141,29 +141,29 @@ module.exports = function(io) {
                             // top left
                             ballX = cornerRadius + ballRadius;
                             ballY = cornerRadius + ballRadius;
-                            ballSpeedX = 0.01;
-                            ballSpeedY = 0.01;
+                            ballSpeedX = 0.0011;
+                            ballSpeedY = 0.0016;
                             break;
                         case 1:
                             // top right
                             ballX = 1 - cornerRadius - ballRadius;
                             ballY = cornerRadius + ballRadius;
-                            ballSpeedX = -0.01;
-                            ballSpeedY = 0.05;
+                            ballSpeedX = -0.0018;
+                            ballSpeedY = 0.0019;
                             break;
                         case 2:
                             // bottom right
                             ballX = 1 - cornerRadius - ballRadius;
                             ballY = 1 - cornerRadius - ballRadius;
-                            ballSpeedX = -0.01;
-                            ballSpeedY = -0.04;
+                            ballSpeedX = -0.0013;
+                            ballSpeedY = -0.0019;
                             break;
                         case 3:
                             // bottom left
                             ballX = cornerRadius - ballRadius;
                             ballY = 1 - cornerRadius - ballRadius;
-                            ballSpeedX = 0.03;
-                            ballSpeedY = -0.02;
+                            ballSpeedX = 0.0014;
+                            ballSpeedY = -0.0012;
                             break;
                     }
                     balls.push(Physics.body('circle', {
@@ -216,7 +216,7 @@ module.exports = function(io) {
             });
             // player input
             socket.on('movement', function(data) {
-                var dx = 0.01;
+                var dx = 0.015;
                 var position = players[data['username']];
                 var move = data['move'];
 					 var newPosition = [
