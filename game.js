@@ -200,7 +200,8 @@ module.exports = function(io) {
                         vx: ballSpeedX,
                         vy: ballSpeedY,
                         mass: ballMass,
-                        id: ball_id
+                        id: ball_id,
+                        coef: 0
                     }));
 
                     world.add(balls[balls.length-1]);
