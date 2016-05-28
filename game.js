@@ -119,7 +119,7 @@ module.exports = function(io) {
 
         // scores
         var startScore = 0;
-        var scoreMax = 7;
+        var scoreMax = 21;
         var scores = {'top' : startScore, 'bottom' : startScore, 'left' : startScore, 'right' : startScore};
 
         var topBot = 'Red Bot';
