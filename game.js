@@ -16,7 +16,9 @@ var world = Physics();
 
 
 module.exports = function(io) {
-    Physics(function( world ){
+    Physics({
+        sleepDisabled: true
+    }, function( world ){
 
         // set up the world
         var framerate = 16;
