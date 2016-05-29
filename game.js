@@ -24,7 +24,6 @@ module.exports = function(io) {
         var framerate = 16;
 
 
-        var cornerRadius = 0.1;
         var topLeftCorner = Physics.body('circle', {
             x: 0,
             y: 0,
