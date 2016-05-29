@@ -227,15 +227,19 @@ module.exports = function(io) {
                 if(balls[i].state.pos.x <= 0) {
                     scores['left']++;
                     removeBall(i);
+                    break;
                 } else if(balls[i].state.pos.x >= 1) {
                     scores['right']++;
                     removeBall(i);
+                    break;
                 } else if(balls[i].state.pos.y <= 0) {
                     scores['top']++;
                     removeBall(i);
+                    break;
                 } else if(balls[i].state.pos.y >= 1) {
                     scores['bottom']++;
                     removeBall(i);
+                    break;
                 }
             }
 
@@ -245,8 +249,9 @@ module.exports = function(io) {
                     scores['right'] = startScore;
                     scores['bottom'] = startScore;
                     scores['left'] = startScore;
-                    for(var i = 0; i < balls.length; i++) {
-                        removeBall(i);
+                    var ballsCount = balls.length
+                    for(var i = 0; i < ballsCount; i++) {
+                        removeBall(0);
                     }
                     reset = true;
                     break;
