@@ -21,7 +21,7 @@ module.exports = function(io) {
     }, function( world ){
 
         // set up the world
-        var framerate = 16;
+        var framerate = 30;
 
 
         var topLeftCorner = Physics.body('circle', {

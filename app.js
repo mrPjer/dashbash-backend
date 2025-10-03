@@ -1,23 +1,17 @@
-var app = require('http').createServer(handler);
-var io = require('socket.io')(app);
-var fs = require('fs');
+const express = require('express');
+const app = express();
+
+const { createServer } = require('node:http');
+const { Server } = require('socket.io');
+
+const server = createServer(app);
+const io = new Server(server);
 
 process.on('SIGINT', function() { process.exit(); });
 
-app.listen(3000);
+app.use(express.static(__dirname + "/static"));
 
-function handler (req, res) {
-  fs.readFile(__dirname + '/index.html',
-  function (err, data) {
-    if (err) {
-      res.writeHead(500);
-      return res.end('Error loading index.html');
-    }
-
-    res.writeHead(200);
-    res.end(data);
-  });
-}
+server.listen(3000);
 
 var connectedUsers = [];
 var connections = 0;
@@ -39,9 +33,3 @@ var connections = 0;
 // });
 
 var game = require('./game')(io);
-
-
-
-
-
-
